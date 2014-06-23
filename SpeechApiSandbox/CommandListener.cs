@@ -1,4 +1,5 @@
 ﻿using Microsoft.Speech.Recognition;
+using Microsoft.Speech.Synthesis;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,7 +42,7 @@ namespace SpeechApiSandbox
             engine = new SpeechRecognitionEngine(recognizer);
             engine.SetInputToDefaultAudioDevice();
 
-            Choices commands = new Choices("flush dns");
+            Choices commands = new Choices("flush dns", "speak");
             GrammarBuilder gb = new GrammarBuilder(commands);
             Grammar g = new Grammar(gb);
 
@@ -73,6 +74,16 @@ namespace SpeechApiSandbox
         void sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             RaiseLogEvent("Recognized " + e.Result.Text);
+
+            if (e.Result.Text == "speak")
+            {
+                SpeechSynthesizer synth = new SpeechSynthesizer();
+                synth.SetOutputToDefaultAudioDevice();
+                synth.Speak("Lorem ipsum dolor sit am.");
+
+                synth.Dispose();
+                synth = null;
+            }
         }
 
         public event EventHandler<LogEventArgs> LogEvent;

@@ -14,10 +14,12 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0" Command="{Binding Start}" Content="Start" />
             <Button Grid.Column="1" Command="{Binding Stop}" Content="Stop" />
+            <Button Grid.Column="2" Command="{Binding Speak}" Content="Speak" />
         </Grid>
         
         <ListBox Grid.Row="1" ItemsSource="{Binding Log}" />

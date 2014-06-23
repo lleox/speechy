@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Command;
 using Microsoft.Speech.Recognition;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Microsoft.Speech.Synthesis;
 
 namespace SpeechApiSandbox.ViewModel
 {
@@ -62,6 +63,13 @@ namespace SpeechApiSandbox.ViewModel
                         listener = null;
                     }
                 });
+
+            Speak = new RelayCommand(() =>
+                {
+                    SpeechSynthesizer synth = new SpeechSynthesizer();
+                    synth.SetOutputToDefaultAudioDevice();
+                    synth.Speak("Lorem ipsum dolor sit am.");
+                });
         }
 
         void listener_LogEvent(object sender, LogEventArgs e)
@@ -73,6 +81,7 @@ namespace SpeechApiSandbox.ViewModel
 
         public RelayCommand Start { get; private set; }
         public RelayCommand Stop { get; private set; }
+        public RelayCommand Speak { get; private set; }
 
         public ObservableCollection<string> Log { get; set; }
         public ReadOnlyCollection<RecognizerInfo> Recognizers { get; set; }
