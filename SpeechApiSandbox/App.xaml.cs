@@ -13,5 +13,6 @@ namespace SpeechApiSandbox
     /// </summary>
     public partial class App : Application
     {
+
     }
 }

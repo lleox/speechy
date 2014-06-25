@@ -1,9 +1,13 @@
 ﻿using Microsoft.Speech.Recognition;
 using Microsoft.Speech.Synthesis;
+using SpeechCommanderAPI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,11 +37,27 @@ namespace SpeechApiSandbox
 
     class CommandListener : IDisposable
     {
+        CompositionContainer _container;
+
+        [ImportMany]
+        public IEnumerable<ISpeechCommand> Commands { get; set; }
+
         SpeechRecognitionEngine engine;
         public RecognizerInfo Recognizer { get; private set; }
 
         public CommandListener(RecognizerInfo recognizer)
         {
+            var catalog = new AggregateCatalog();
+            catalog.Catalogs.Add(new AssemblyCatalog(typeof(App).Assembly));
+            catalog.Catalogs.Add(new DirectoryCatalog(System.AppDomain.CurrentDomain.BaseDirectory));
+            
+            if (Directory.Exists("plugin"))
+                catalog.Catalogs.Add(new DirectoryCatalog("plugin"));
+
+            _container = new CompositionContainer(catalog);
+
+            _container.ComposeParts(this);
+
             Recognizer = recognizer;
             engine = new SpeechRecognitionEngine(recognizer);
             engine.SetInputToDefaultAudioDevice();
