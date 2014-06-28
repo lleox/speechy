@@ -1,10 +1,10 @@
 using System.Linq;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using Microsoft.Speech.Recognition;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Microsoft.Speech.Synthesis;
+using System.Speech.Synthesis;
+using System.Speech.Recognition;
 
 namespace SpeechApiSandbox.ViewModel
 {
@@ -42,25 +42,32 @@ namespace SpeechApiSandbox.ViewModel
 
             Start = new RelayCommand(() =>
                 {
-                    if (listener != null)
+                    if (listener != null && listener.Recognizer != SelectedRecognizer)
                     {
                         Stop.Execute(null);
                     }
 
                     listener = new CommandListener(SelectedRecognizer);
                     listener.LogEvent += listener_LogEvent;
+                    listener.Start();
+
                     Log.Add("Started speech command listener " + SelectedRecognizer.Id);
                 });
 
             Stop = new RelayCommand(() =>
                 {
-                    if (listener != null)
+                    Log.Add("Stopping speech command listener " + listener.Recognizer.Id);
+
+                    if (listener != null && listener.Recognizer != SelectedRecognizer)
                     {
-                        Log.Add("Stopping speech command listener " + listener.Recognizer.Id);
                         listener.LogEvent -= listener_LogEvent;
 
                         listener.Dispose();
                         listener = null;
+                    }
+                    else
+                    {
+                        listener.Stop();
                     }
                 });
 
